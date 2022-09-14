@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block javascript %}
+  <script>
+    var infinite = new Waypoint.Infinite({
+      element: $('.infinite-container')[0],
+      onBeforePageLoad: function () {
+        $('.loading').show();
+      },
+      onAfterPageLoad: function ($items) {
+        $('.loading').hide();
+      }
+    });
+  </script>
+{% endblock %}
+{% block content %}
+<div class="infinite-container">
+    <div class = "card mb-4">
+        <div class = "card-header">
+            <form action="{% url 'class_base_index' %}" method="GET">
+                {{ filter_form.as_p }}
+                <div class="form-group">
+                    <button class="btn btn-info" type="submit">Sort</button>
+                </div>
+            </form>
+            <div class="form-group">
+              <a href="{% url 'class_base_create' %}" class="btn btn-info">Create</a>
+          </div>
+        </div>
+    </div>
+    <br>
+    {% for article in customers %}
+      <div class="infinite-item">
+        <h3>{{ article.name }}</h3>
+        <p>
+          <small>{{ article.phone }} / {{ article.email }}</small>
+        </p>
+        <a href="{% url 'class_base_delete' pk=article.pk %}" >Delete</a>
+      </div>
+      
+    {% endfor %}
+  </div>
+
+  <div class="loading" style="display: none;">
+    Loading...
+  </div>
+  {% if page_obj.has_next %}
+  {% if request.GET.name %}<a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}&name={{request.GET.name}}">More</a>
+  {% else %}
+    <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}">More</a>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}
